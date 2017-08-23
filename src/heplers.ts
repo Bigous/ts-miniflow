@@ -1,3 +1,6 @@
+import * as bm from 'bluemath';
+import { Input } from './input';
+import { Node } from './node';
 /*
 import numpy as np
 
@@ -227,33 +230,52 @@ def topological_sort(feed_dict):
                 S.add(m)
     return L
  */
+interface IG {
+  in: Set<Node>;
+  out: Set<Node>;
+}
 
-export function topologicalSort(feedDict: Map<any, any>): void {
+export function topologicalSort(feedDict: Map<Node, any>): Node[] {
   const inputNodes = [];
-  for(const key of feedDict.keys()) {
+  for (const key of feedDict.keys()) {
     inputNodes.push(key);
   }
-  const G : any = {};
+  const G = new Map<Node, IG>();
   const nodes = [...inputNodes];
-  while(nodes.length > 0) {
-    const n = nodes.pop();
-    if(!G.hasOwnProperty(n)) {
-      G[n] = {in: new Set(), out: new Set()};
+  while (nodes.length > 0) {
+    const n = nodes.pop() as Node;
+    if (!G.has(n)) {
+      G.set(n, { in: new Set<Node>(), out: new Set<Node>() });
     }
-    for(const m of n.outboundNodes) {
-      if(!G.hasOwnProperty(m)) {
-        G[m] = {in:new Set(), out: new Set()};
-        (G[n].in as Set<any>).add(m);
-        (G[m].in as Set<any>).add(n);
+    for (const m of n.outboundNodes) {
+      if (!G.has(m)) {
+        G.set(m, { in: new Set<Node>(), out: new Set<Node>() });
+        (G.get(n) as IG).in.add(m);
+        (G.get(m) as IG).in.add(n);
         nodes.push(m);
       }
     }
   }
-  const L = [];
-  const S = new Set(inputNodes);
-  while(S.size > 0) {
-    const n = S.
+  const L = new Array<Node>();
+  const S = new Set<Node>(inputNodes);
+  while (S.size > 0) {
+    const n = S.values().next().value;
+    S.delete(n);
+
+    if (n instanceof Input) {
+      n.value = feedDict.get(n);
+    }
+
+    L.push(n);
+    for (const m of n.outboundNodes) {
+      (G.get(n) as IG).out.delete(m);
+      (G.get(m) as IG).in.delete(n);
+      if ((G.get(m) as IG).in.size === 0) {
+        S.add(m);
+      }
+    }
   }
+  return L;
 }
 
 /*
@@ -274,7 +296,17 @@ def forward_and_backward(graph):
     # see: https://docs.python.org/2.3/whatsnew/section-slices.html
     for n in graph[::-1]:
         n.backward()
+*/
+export function forwardAndBackward(graph: Node[]): void {
+    for (const n of graph) {
+        n.forward();
+    }
+    for (const n of graph.reverse()) {
+        n.backward();
+    }
+}
 
+/*
 
 def sgd_update(trainables, learning_rate=1e-2):
     """
@@ -296,3 +328,9 @@ def sgd_update(trainables, learning_rate=1e-2):
         t.value -= learning_rate * partial
 
 */
+export function sgdUpdate(trainables: Input[], learningRate: number = 1e-2): void {
+    for (const t of trainables) {
+        const partial = t.gradients.get(t) as number | bm.NDArray | bm.Complex;
+        t.value = bm.sub(t.value, bm.mul(partial, learningRate));
+    }
+}

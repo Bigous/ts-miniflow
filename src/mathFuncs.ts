@@ -79,10 +79,13 @@ export function hat(mat: number[][]): number[][] {
 }
 
 export function inv(mat: bm.NDArray): bm.NDArray {
-  const ret = new bm.NDArray({shape: [mat.shape[1], mat.shape[0]], datatype: mat.datatype});
+  const ret = new bm.NDArray({
+    shape: [mat.shape[1], mat.shape[0]],
+    datatype: mat.datatype
+  });
   for (let i = 0; i < mat.shape[0]; i++) {
     for (let o = 0; o < mat.shape[1]; o++) {
-      ret.set(o,i,mat.get(i,o));
+      ret.set(o, i, mat.get(i, o));
     }
   }
   return ret;
@@ -126,11 +129,14 @@ export function sum(
   return ret;
 }
 
-export function sumColumns(mat: bm.NDArray) : bm.NDArray {
-  const ret = new bm.NDArray({shape: [1, mat.shape[1]], datatype: mat.datatype});
-  for(let col = 0; col < mat.shape[1]; col++) {
+export function sumColumns(mat: bm.NDArray): bm.NDArray {
+  const ret = new bm.NDArray({
+    shape: [1, mat.shape[1]],
+    datatype: mat.datatype
+  });
+  for (let col = 0; col < mat.shape[1]; col++) {
     let s = 0;
-    for(let linha = 0; linha < mat.shape[0]; linha++) {
+    for (let linha = 0; linha < mat.shape[0]; linha++) {
       s += mat.get(linha, col) as number;
     }
     ret.set(0, col, s);

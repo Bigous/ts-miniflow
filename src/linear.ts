@@ -4,7 +4,7 @@ import { inv, sigmoid, sumColumns } from "./mathFuncs";
 import { Node } from "./node";
 
 export class Linear extends Node {
-  constructor(X: Node, W: Node, b:Node) {
+  constructor(X: Node, W: Node, b: Node) {
     super([X, W, b]);
   }
 
