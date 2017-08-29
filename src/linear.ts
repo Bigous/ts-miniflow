@@ -9,9 +9,15 @@ export class Linear extends Node {
   }
 
   public forward(): void {
-    const X = this.inboundNodes[0].value;
-    const W = this.inboundNodes[1].value;
+    const X = this.inboundNodes[0].value as bm.NDArray;
+    const W = this.inboundNodes[1].value as bm.NDArray;
     const b = this.inboundNodes[2].value;
+    // tslint:disable-next-line:no-console
+    console.log(X);
+    // tslint:disable-next-line:no-console
+    console.log(W);
+    // tslint:disable-next-line:no-console
+    console.log(b);
     this.value = bm.add(bm.mul(X, W), b);
   }
 

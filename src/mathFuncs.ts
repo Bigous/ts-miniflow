@@ -80,8 +80,8 @@ export function hat(mat: number[][]): number[][] {
 
 export function inv(mat: bm.NDArray): bm.NDArray {
   const ret = new bm.NDArray({
-    shape: [mat.shape[1], mat.shape[0]],
-    datatype: mat.datatype
+    datatype: mat.datatype,
+    shape: [mat.shape[1], mat.shape[0]]
   });
   for (let i = 0; i < mat.shape[0]; i++) {
     for (let o = 0; o < mat.shape[1]; o++) {
@@ -129,10 +129,59 @@ export function sum(
   return ret;
 }
 
+function addNumArray(x: number, y: number[]): number[] {
+  return [...y].map(v => v + x);
+}
+
+function add2(x: numbers, y: numbers): numbers {
+  if (x == null || y == null) {
+    return null;
+  }
+  if (typeof x === 'number' && typeof y === 'number') {
+    return x + y;
+  }
+  if (typeof x === 'number') {
+    if (Array.isArray(y)) {
+      if (Array.isArray(y[0])) {
+        const ret = [];
+        for (const l of (y as number[][])) {
+          ret.push(addNumArray(x, l));
+        }
+        return ret;
+      } else {
+        return addNumArray(x, y as number[]);
+      }
+    }
+  } else if (Array.isArray(x)) {
+    if (typeof y === 'number') {
+      if (Array.isArray(x[0])) {
+        const ret = [];
+        for (const l of (x as number[][])) {
+          ret.push(addNumArray(y, l));
+        }
+        return ret;
+      } else {
+        return addNumArray(y, x as number[]);
+      }
+    } else {
+      // ambos sao array...
+    }
+  }
+  return 0;
+}
+
+export function add(...values: numbers[]): numbers {
+  let ret: numbers = null;
+  for (const value of values) {
+    ret = ret === null ? value : add2(ret, value);
+  }
+  return ret;
+}
+
 export function sumColumns(mat: bm.NDArray): bm.NDArray {
   const ret = new bm.NDArray({
-    shape: [1, mat.shape[1]],
-    datatype: mat.datatype
+    datatype: mat.datatype,
+    shape: [1, mat.shape[1]]
   });
   for (let col = 0; col < mat.shape[1]; col++) {
     let s = 0;

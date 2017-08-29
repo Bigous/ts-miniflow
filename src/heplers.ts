@@ -1,6 +1,6 @@
-import * as bm from 'bluemath';
-import { Input } from './input';
-import { Node } from './node';
+import * as bm from "bluemath";
+import { Input } from "./input";
+import { Node } from "./node";
 /*
 import numpy as np
 
@@ -269,8 +269,9 @@ export function topologicalSort(feedDict: Map<Node, any>): Node[] {
     L.push(n);
     for (const m of n.outboundNodes) {
       (G.get(n) as IG).out.delete(m);
-      (G.get(m) as IG).in.delete(n);
-      if ((G.get(m) as IG).in.size === 0) {
+      const Gm = G.get(m) as IG;
+      Gm.in.delete(n);
+      if (Gm.in.size === 0) {
         S.add(m);
       }
     }
@@ -298,12 +299,12 @@ def forward_and_backward(graph):
         n.backward()
 */
 export function forwardAndBackward(graph: Node[]): void {
-    for (const n of graph) {
-        n.forward();
-    }
-    for (const n of graph.reverse()) {
-        n.backward();
-    }
+  for (const n of graph) {
+    n.forward();
+  }
+  for (const n of graph.reverse()) {
+    n.backward();
+  }
 }
 
 /*
@@ -328,9 +329,12 @@ def sgd_update(trainables, learning_rate=1e-2):
         t.value -= learning_rate * partial
 
 */
-export function sgdUpdate(trainables: Input[], learningRate: number = 1e-2): void {
-    for (const t of trainables) {
-        const partial = t.gradients.get(t) as number | bm.NDArray | bm.Complex;
-        t.value = bm.sub(t.value, bm.mul(partial, learningRate));
-    }
+export function sgdUpdate(
+  trainables: Input[],
+  learningRate: number = 1e-2
+): void {
+  for (const t of trainables) {
+    const partial = t.gradients.get(t) as number | bm.NDArray | bm.Complex;
+    t.value = bm.sub(t.value, bm.mul(partial, learningRate));
+  }
 }
