@@ -137,14 +137,14 @@ function add2(x: numbers, y: numbers): numbers {
   if (x == null || y == null) {
     return null;
   }
-  if (typeof x === 'number' && typeof y === 'number') {
+  if (typeof x === "number" && typeof y === "number") {
     return x + y;
   }
-  if (typeof x === 'number') {
+  if (typeof x === "number") {
     if (Array.isArray(y)) {
       if (Array.isArray(y[0])) {
         const ret = [];
-        for (const l of (y as number[][])) {
+        for (const l of y as number[][]) {
           ret.push(addNumArray(x, l));
         }
         return ret;
@@ -153,10 +153,10 @@ function add2(x: numbers, y: numbers): numbers {
       }
     }
   } else if (Array.isArray(x)) {
-    if (typeof y === 'number') {
+    if (typeof y === "number") {
       if (Array.isArray(x[0])) {
         const ret = [];
-        for (const l of (x as number[][])) {
+        for (const l of x as number[][]) {
           ret.push(addNumArray(y, l));
         }
         return ret;
@@ -165,9 +165,32 @@ function add2(x: numbers, y: numbers): numbers {
       }
     } else {
       // ambos sao array...
+      if (Array.isArray(x[0]) && Array.isArray(y[0])) {
+        // ambos são arrays duplos - então tem que ter o mesmo "shape" e daí soma item a item de cada.
+        const xaa = x as number[][];
+        const yaa = y as number[][];
+        if (xaa.length !== yaa.length || xaa[0].length !== yaa[0].length) {
+          throw Error(`Shape mismatch adding X(${xaa.length},${xaa[0].length}) to Y(${yaa.length},${yaa[0].length})`);
+        }
+        const ret = [];
+        for (let i = 0; i < xaa.length; i++) {
+          const linha = [];
+          for (let o = 0; o < xaa[0].length; o++) {
+            linha.push(xaa[i][o] + yaa[i][o]);
+          }
+          ret.push(linha);
+        }
+        return ret;
+      } else if (Array.isArray(x[0]) || Array.isArray(y[0])) {
+        // pelo menos 1 é array duplo
+        const xaa = (Array.isArray(x[0]) ? x : y) as number[][];
+        const ya = (Array.isArray(x[0]) ? y : x) as number[];
+        // TODO: continuar...
+      }
     }
   }
-  return 0;
+
+  throw Error(`Cannot add (${typeof x}) ${x} to (${typeof y}) ${y}`);
 }
 
 export function add(...values: numbers[]): numbers {
