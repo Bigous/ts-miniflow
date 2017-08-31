@@ -251,10 +251,10 @@ export function topologicalSort(feedDict: Map<Node, any>): Node[] {
     for (const m of n.outboundNodes) {
       if (!G.has(m)) {
         G.set(m, { in: new Set<Node>(), out: new Set<Node>() });
-        (G.get(n) as IG).in.add(m);
-        (G.get(m) as IG).in.add(n);
-        nodes.push(m);
       }
+      (G.get(n) as IG).out.add(m);
+      (G.get(m) as IG).in.add(n);
+      nodes.push(m);
     }
   }
   const L = new Array<Node>();

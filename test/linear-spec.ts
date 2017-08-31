@@ -23,6 +23,7 @@ describe("Linear", () => {
   const f = new Linear(X, W, b);
   const feedDict = new Map<Node, any>([[X, X_], [W, W_], [b, B_]]);
   const graph = topologicalSort(feedDict);
+  forwardAndBackward(graph);
 
   it("should verify inputs", () => {
     expect(f.X).to.be.deep.equals(X1_);
@@ -30,8 +31,7 @@ describe("Linear", () => {
     expect(f.b).to.be.deep.equals(B1_);
   });
 
-  it("output should be [[-9, 4],[-9, 4]]", () => {
-    forwardAndBackward(graph);
+  it("should verify forward propagation", () => {
     const output = f.value as NDArray;
     const expected = NDArray([-9, 4, -9, 4], [2, 2]);
     expect(ops.equals(output, expected)).to.be.true;

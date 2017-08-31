@@ -223,7 +223,7 @@ import * as ops from "ndarray-ops";
 // }
 
 export function sigmoids(x: number): number {
-  return 1 / (1 - Math.exp(-x));
+  return 1.0 / (1.0 + Math.exp(-1.0 * x));
 }
 
 export function sigmoida(c: NDArray, x: NDArray): NDArray {
@@ -255,7 +255,6 @@ export function add(c: NDArray, a: NDArray, b: NDArray): NDArray {
   // tslint:disable:no-console
   if (a.size > b.size && c.size === a.size) {
     if (a.shape[1] === b.shape[1] && b.shape[0] === 1) {
-      console.log("aqui 1");
       for (let i = 0; i < a.shape[0]; i++) {
         for (let o = 0; o < a.shape[1]; o++) {
           c.set(i, o, a.get(i, o) + b.get(0, o));
@@ -263,7 +262,6 @@ export function add(c: NDArray, a: NDArray, b: NDArray): NDArray {
       }
       return c;
     } else if (a.shape[1] === b.shape[0] && b.shape[1] === 1) {
-      console.log("aqui 2");
       for (let i = 0; i < a.shape[0]; i++) {
         for (let o = 0; o < a.shape[1]; o++) {
           c.set(i, o, a.get(i, o) + b.get(o, 0));
@@ -271,7 +269,6 @@ export function add(c: NDArray, a: NDArray, b: NDArray): NDArray {
       }
       return c;
     } else if (b.shape.length === 1 && a.shape[1] === b.shape[0]) {
-      console.log("aqui 3");
       for (let i = 0; i < a.shape[0]; i++) {
         for (let o = 0; o < a.shape[1]; o++) {
           c.set(i, o, a.get(i, o) + b.get(o));
@@ -280,7 +277,6 @@ export function add(c: NDArray, a: NDArray, b: NDArray): NDArray {
       return c;
     }
   }
-  console.log("aqui 4");
   return ops.add(c, a, b);
 }
 
@@ -292,7 +288,7 @@ export function sumColumns(a: NDArray): NDArray {
   if (a.shape.length !== 2) {
     throw Error(`a should be 2D matrix`);
   }
-  const ret = NDArray(new Float32Array(a.shape[1]));
+  const ret = NDArray(new Float32Array(a.shape[1]), [1, a.shape[1]]);
   for (let c = 0; c < a.shape[1]; c++) {
     let s = 0;
     for (let r = 0; r < a.shape[0]; r++) {
