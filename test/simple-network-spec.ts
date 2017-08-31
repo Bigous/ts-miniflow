@@ -12,8 +12,6 @@ const expect = chai.expect;
 // tslint:disable:no-console
 
 describe("Back propagation", () => {
-  // tslint:disable-next-line:curly
-  if (1 === 1) return;
   const X = new Input();
   const W = new Input();
   const b = new Input();
