@@ -1,26 +1,39 @@
 /// <reference path='../node_modules/@types/mocha/index.d.ts' />
 
-import * as bm from "bluemath";
 import * as chai from "chai";
+import * as NDArray from "ndarray";
+import ops = require("ndarray-ops");
 import { Input, Linear, Node } from "../src";
 import { forwardAndBackward, topologicalSort } from "../src/heplers";
 
 const expect = chai.expect;
 
+// tslint:disable:no-unused-expression
+
 describe("Linear", () => {
-  it("should output [[-9, 4],[-9, 4]]", () => {
-    const X = new Input();
-    const W = new Input();
-    const b = new Input();
-    const X_ = new bm.NDArray([[-1, -2], [-1, -2]]);
-    const W_ = new bm.NDArray([[2, -3], [2, -3]]);
-    const B_ = new bm.NDArray([-3, -5]);
-    const f = new Linear(X, W, b);
-    const feedDict = new Map<Node, any>([[X, X_], [W, W_], [b, B_]]);
-    const graph = topologicalSort(feedDict);
+  const X = new Input();
+  const W = new Input();
+  const b = new Input();
+  const X_ = NDArray([-1, -2, -1, -2], [2, 2]);
+  const W_ = NDArray([2, -3, 2, -3], [2, 2]);
+  const B_ = NDArray([-3, -5], [1, 2]);
+  const X1_ = NDArray([-1, -2, -1, -2], [2, 2]);
+  const W1_ = NDArray([2, -3, 2, -3], [2, 2]);
+  const B1_ = NDArray([-3, -5], [1, 2]);
+  const f = new Linear(X, W, b);
+  const feedDict = new Map<Node, any>([[X, X_], [W, W_], [b, B_]]);
+  const graph = topologicalSort(feedDict);
+
+  it("should verify inputs", () => {
+    expect(f.X).to.be.deep.equals(X1_);
+    expect(f.W).to.be.deep.equals(W1_);
+    expect(f.b).to.be.deep.equals(B1_);
+  });
+
+  it("output should be [[-9, 4],[-9, 4]]", () => {
     forwardAndBackward(graph);
-    const output = f.value as bm.NDArray;
-    const expected = new bm.NDArray([[-9, 4], [-9, 4]]);
-    expect(output).to.be.equals(expected, "Was?");
+    const output = f.value as NDArray;
+    const expected = NDArray([-9, 4, -9, 4], [2, 2]);
+    expect(ops.equals(output, expected)).to.be.true;
   });
 });

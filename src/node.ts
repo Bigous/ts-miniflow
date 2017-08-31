@@ -1,5 +1,4 @@
-import * as bm from "bluemath";
-
+import * as NDArray from "ndarray";
 /**
  * Base class for node in the network
  *
@@ -7,12 +6,12 @@ import * as bm from "bluemath";
  * @class Node
  */
 export abstract class Node {
-  public value: number | bm.NDArray | bm.Complex;
+  public value: number | NDArray;
 
   public inboundNodes: Node[];
   public outboundNodes: Node[];
-  // Keys are inputs to this node and their valies are partials of this node with respect to that input
-  public gradients: Map<Node, number | bm.NDArray | bm.Complex> = new Map();
+  // Keys are inputs to this node and their values are partials of this node with respect to that input
+  public gradients: Map<Node, number | NDArray> = new Map();
 
   /**
    * Creates an instance of Node.
@@ -29,6 +28,10 @@ export abstract class Node {
     for (const n of inboundNodes) {
       n.outboundNodes.push(this);
     }
+  }
+
+  public gradGet(idx: Node): NDArray {
+    return this.gradients.get(idx) as NDArray;
   }
 
   /**

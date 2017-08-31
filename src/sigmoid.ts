@@ -1,5 +1,6 @@
-import * as bm from "bluemath";
-import { sigmoid } from "./mathFuncs";
+import * as NDArray from "ndarray";
+import ops = require("ndarray-ops");
+import { sigmoids } from "./mathFuncs";
 import { Node } from "./node";
 
 export class Sigmoid extends Node {
@@ -8,21 +9,24 @@ export class Sigmoid extends Node {
   }
 
   public forward(): void {
-    this.value = sigmoid(this.inboundNodes[0].value as number);
+    this.value = sigmoids(this.inboundNodes[0].value as number);
   }
 
   public backward(): void {
     for (const n of this.inboundNodes) {
-      this.gradients.set(n, bm.zeros(n.value as any));
+      this.gradients.set(
+        n,
+        NDArray(new Float32Array(n.value as any).fill(0.0))
+      );
     }
     for (const n of this.outboundNodes) {
       const gradCost = n.gradients.get(this);
       const s = this.value as number;
       this.gradients.set(
         this.inboundNodes[0],
-        bm.add(
+        ops.add(
           this.gradients.get(this.inboundNodes[0]) as any,
-          bm.mul(gradCost as any, s * (1 - s))
+          ops.mul(gradCost as any, s * (1 - s))
         )
       );
     }

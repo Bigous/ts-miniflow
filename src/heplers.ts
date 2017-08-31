@@ -1,4 +1,5 @@
-import * as bm from "bluemath";
+import * as NDArray from "ndarray";
+import ops = require("ndarray-ops");
 import { Input } from "./input";
 import { Node } from "./node";
 /*
@@ -334,7 +335,7 @@ export function sgdUpdate(
   learningRate: number = 1e-2
 ): void {
   for (const t of trainables) {
-    const partial = t.gradients.get(t) as number | bm.NDArray | bm.Complex;
-    t.value = bm.sub(t.value, bm.mul(partial, learningRate));
+    const partial = t.gradients.get(t) as number | NDArray;
+    t.value = ops.sub(t.value, ops.mul(partial, learningRate));
   }
 }

@@ -25,7 +25,11 @@
     "watch:test": "npm run test -- --watch"
   },
   "dependencies": {
-    "bluemath": "^0.3.2"
+    "@types/ndarray": "^1.0.5",
+    "ndarray": "^1.0.18",
+    "ndarray-gemm": "^1.0.0",
+    "ndarray-ops": "^1.2.2",
+    "ndarray-show": "^2.0.0"
   },
   "devDependencies": {
     "@types/chai": "^3.0.0",
