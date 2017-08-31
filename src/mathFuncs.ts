@@ -269,6 +269,7 @@ export function add(c: NDArray, a: NDArray, b: NDArray): NDArray {
       }
       return c;
     } else if (b.shape.length === 1 && a.shape[1] === b.shape[0]) {
+      // FIXME: I've assumed a behavior, but I'm not sure if it's correct.
       for (let i = 0; i < a.shape[0]; i++) {
         for (let o = 0; o < a.shape[1]; o++) {
           c.set(i, o, a.get(i, o) + b.get(o));
